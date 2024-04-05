@@ -7,6 +7,15 @@ import os
 
 # 创建OpenCC对象，选择转换的模式
 cc = OpenCC('t2s')  # 繁体中文转简体中文
+
+
+def extract_years(text):
+    pattern = r'\d+年'
+    years = re.findall(pattern, text)
+    cleaned_years = [int(year[:-1]) for year in years]
+    return cleaned_years
+
+
 # 定义提取函数
 def extract_events_from_html(html_content):
     events_day = []
@@ -24,7 +33,7 @@ def extract_events_from_html(html_content):
             event = event_li.text.strip()
             event = cc.convert(event).split("：")
             pattern = r'\b\d+年\b'
-            if event == []: continue
+            if not event: continue
             if event.__len__() == 1: continue
             if event[0] == "":
                 event[0] = event[1]
@@ -32,8 +41,14 @@ def extract_events_from_html(html_content):
             if event[1] == "":
                 event[1] = event[2]
             if re.match(pattern, event[0]):
-                events_day.append({"year": event[0],"event": re.sub(r'\[\d+\]', '', event[1])})
-    
+                years = extract_years(event[0])
+                events_day.append({"year": int(years[0]), "event": re.sub(r'\[\d+\]', '', event[1])})
+
+    n = len(events_day)
+    for i in range(n):
+        for j in range(0, n - i - 1):
+            if events_day[j]["year"] > events_day[j + 1]["year"]:
+                events_day[j], events_day[j + 1] = events_day[j + 1], events_day[j]
     return events_day
 
 
@@ -58,7 +73,6 @@ def extract_events_from_html(html_content):
 #         print(event)
 # else:
 #     print("请求失败，状态码:", response.status_code)
-
 
 
 # 保存文件
@@ -93,7 +107,7 @@ def extract_events_from_html(html_content):
 
 file = "month_history_toDay.json"
 
-for month in range(1, 13):
+for month in range(3, 13):
     events_month = []
     for day in range(1, 32):
         date = "%u月%u日" % (month, day)
@@ -113,6 +127,6 @@ for month in range(1, 13):
         else:
             print("请求失败，状态码:", response.status_code)
 
-    fileOpen = open(str(month) + file, mode='w+', encoding='utf-8')
+    fileOpen = open("./history_toDay/" + str(month) + file, mode='w+', encoding='utf-8')
     fileOpen.write(json.dumps(events_month, ensure_ascii=False))
     fileOpen.close()
