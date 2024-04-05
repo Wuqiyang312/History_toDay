@@ -28,7 +28,7 @@
                 success: function (data) {
                     events = data[today.getDay()-1]
                     for (var i = events.length-1; i >= 0; i--) {
-                        $("#print").append("<div>" + events[i].year + events[i].event + "</div>")
+                        $("#print").append("<div>" + events[i].year + "年: " + events[i].event + "</div>")
                     }
                 }
             })
