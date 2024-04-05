@@ -2,6 +2,8 @@ from bs4 import BeautifulSoup
 import requests
 from opencc import OpenCC
 import re
+import json
+import os
 
 # 创建OpenCC对象，选择转换的模式
 cc = OpenCC('t2s')  # 繁体中文转简体中文
@@ -57,15 +59,39 @@ def extract_events_from_html(html_content):
 # else:
 #     print("请求失败，状态码:", response.status_code)
 
+
+
 # 保存文件
-import json
-import os
+# file = "history_toDay.json"
+# fileOpen = open(file, mode='w+', encoding='utf-8')
+# fileOpen.write("[")
+# fileOpen.close()
+# for month in range(1, 13):
+#     events_month = []
+#     for day in range(1, 32):
+#         date = "%u月%u日" % (month, day)
+#         url = "https://zh.wikipedia.org/wiki/" + date
+#         # 发送GET请求
+#         response = requests.get(url)
+#         # 检查请求是否成功
+#         if response.status_code == 200:
+#             # 提取事件信息
+#             events = extract_events_from_html(response.text)
+#             if events:
+#                 events_month.append(events)
+#                 print(date)
+#         else:
+#             print("请求失败，状态码:", response.status_code)
+#     fileOpen = open(file, mode='a+', encoding='utf-8')
+#     if month != 1:
+#         fileOpen.write(",")
+#     fileOpen.write(json.dumps(events_month, ensure_ascii=False))
+#     fileOpen.close()
+# fileOpen = open(file, mode='a+', encoding='utf-8')
+# fileOpen.write("]")
+# fileOpen.close()
 
-file = "History_toDay.json"
-
-fileOpen = open(file, mode='w+', encoding='utf-8')
-fileOpen.write("[")
-fileOpen.close()
+file = "month_history_toDay.json"
 
 for month in range(1, 13):
     events_month = []
@@ -87,12 +113,6 @@ for month in range(1, 13):
         else:
             print("请求失败，状态码:", response.status_code)
 
-    fileOpen = open(file, mode='a+', encoding='utf-8')
-    if month != 1:
-        fileOpen.write(",")
+    fileOpen = open(str(month) + file, mode='w+', encoding='utf-8')
     fileOpen.write(json.dumps(events_month, ensure_ascii=False))
     fileOpen.close()
-
-fileOpen = open(file, mode='a+', encoding='utf-8')
-fileOpen.write("]")
-fileOpen.close()

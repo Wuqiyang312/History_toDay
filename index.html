@@ -10,6 +10,7 @@
 
 <body>
     <h1>历史上的今天</h1>
+    <a href="https://github.com/Wuqiyang312/History_toDay">github</a>
     <h2><span id="month"></span>月<span id="day"></span>日</h2>
     <div id="print">
 
@@ -21,11 +22,11 @@
             $("#day").text(today.getDate())
 
             $.ajax({
-                url: "./History_toDay.json",
+                url: "/history_toDay/"+ (today.getMonth()+1) + "month_history_toDay.json",
                 type: "GET",
                 dataType: "json",
                 success: function (data) {
-                    events = data[today.getMonth()][today.getDay()-1]
+                    events = data[today.getDay()-1]
                     for (var i = events.length-1; i >= 0; i--) {
                         $("#print").append("<div>" + events[i].year + events[i].event + "</div>")
                     }
